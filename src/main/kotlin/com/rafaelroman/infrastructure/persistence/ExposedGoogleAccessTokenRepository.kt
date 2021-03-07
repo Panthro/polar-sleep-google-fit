@@ -32,13 +32,21 @@ class ExposedGoogleAccessTokenRepository(private val db: Database) : GoogleAcces
         }
     }
 
-    override suspend fun current(): GoogleAccessToken = transaction(db) {
-        GoogleAccessTokenDao.all().limit(1).first().let {
-            GoogleAccessToken(
-                accessToken = it.accessToken,
-                refreshToken = it.refreshToken,
-                expiresInSeconds = it.expiresIn,
-            )
+    override suspend fun current(): GoogleAccessToken? = transaction(db) {
+        GoogleAccessTokenDao.all().limit(1)
+            .run {
+                if (!empty()) {
+                    first().let {
+                        GoogleAccessToken(
+                            accessToken = it.accessToken,
+                            refreshToken = it.refreshToken,
+                            expiresInSeconds = it.expiresIn,
+                        )
+                    }
+                } else {
+                    null
+                }
+
         }
     }
 }

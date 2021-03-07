@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 
 class ExposedPolarAccessTokenRepository(
-    private val db: Database
+    private val db: Database,
 ) : PolarAccessTokenRepository {
 
     init {
@@ -37,15 +37,21 @@ class ExposedPolarAccessTokenRepository(
         }
     }
 
-    override suspend fun current(): PolarAccessToken = transaction(db) {
+    override suspend fun current(): PolarAccessToken? = transaction(db) {
         PolarAccessTokenDao.all().limit(1)
-            .first()
-            .let {
-                PolarAccessToken(
-                    it.accessToken,
-                    it.expiresIn,
-                    it.polarUserId.value
-                )
+            .run {
+                if (!empty()) {
+                    first().let {
+                        PolarAccessToken(
+                            it.accessToken,
+                            it.expiresIn,
+                            it.polarUserId.value
+                        )
+                    }
+                } else {
+                    null
+                }
+
             }
     }
 }

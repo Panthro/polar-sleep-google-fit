@@ -17,7 +17,6 @@ import java.util.UUID.randomUUID
 
 internal class AuthorizeWithGoogleUseCaseTest {
 
-
     @Test
     fun `should authorize with google`() = runBlocking {
         // Arrange
@@ -43,6 +42,4 @@ internal class AuthorizeWithGoogleUseCaseTest {
             googleAccessTokenRepository save googleAccessToken
         }
     }
-
-
 }

@@ -10,9 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import java.util.UUID.randomUUID
 
-
 internal class HttpGoogleAccessTokenProviderTest {
-
 
     @Test
     fun `should retrieve access token`() = runBlocking {
@@ -41,6 +39,4 @@ internal class HttpGoogleAccessTokenProviderTest {
         // Assert
         assertThat(result).isEqualTo(googleAccessToken)
     }
-
 }
-

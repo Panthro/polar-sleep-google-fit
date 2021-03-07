@@ -14,7 +14,6 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 class ExposedPolarAccessTokenRepository(
     private val db: Database,
 ) : PolarAccessTokenRepository {
@@ -51,7 +50,6 @@ class ExposedPolarAccessTokenRepository(
                 } else {
                     null
                 }
-
             }
     }
 }
@@ -64,7 +62,6 @@ object PolarAccessTokenTable : IdTable<Long>() {
     override val primaryKey by lazy { super.primaryKey ?: PrimaryKey(polarUserId) }
     override val id: Column<EntityID<Long>>
         get() = polarUserId
-
 }
 
 class PolarAccessTokenDao(userId: EntityID<Long>) : LongEntity(userId) {
@@ -73,5 +70,4 @@ class PolarAccessTokenDao(userId: EntityID<Long>) : LongEntity(userId) {
     var accessToken by PolarAccessTokenTable.accessToken
     var expiresIn by PolarAccessTokenTable.expiresIn
     var polarUserId by PolarAccessTokenTable.polarUserId
-
 }

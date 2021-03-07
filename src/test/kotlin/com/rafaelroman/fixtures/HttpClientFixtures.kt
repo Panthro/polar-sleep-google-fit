@@ -30,7 +30,6 @@ fun mockHttpClient(handler: MockRequestHandler) = HttpClient(MockEngine) {
     }
 }
 
-
 val Url.hostWithPortIfRequired: String get() = if (port == protocol.defaultPort) host else hostWithPort
 val Url.fullUrl: String get() = "${protocol.name}://$hostWithPortIfRequired$fullPath"
 
@@ -81,11 +80,11 @@ fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request 
                             }
                           ]
                         }
-                    """.trimIndent(), headers = responseHeaders
+                """.trimIndent(),
+                headers = responseHeaders
             )
         }
         else -> error("Unhandled ${request.url.fullUrl}")
-
     }
 }
 
@@ -104,10 +103,12 @@ fun mockPolarAccessTokenRequest(
             assertThat(request.body.contentType.toString()).isEqualTo("application/x-www-form-urlencoded; charset=UTF-8")
             assertThat(request.headers["Authorization"]).isEqualTo("Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}")
             assertThat(request.body).isInstanceOf(FormDataContent::class)
-            assertThat((request.body as FormDataContent).formData).isEqualTo(Parameters.build {
-                append("code", code)
-                append("grant_type", "authorization_code")
-            })
+            assertThat((request.body as FormDataContent).formData).isEqualTo(
+                Parameters.build {
+                    append("code", code)
+                    append("grant_type", "authorization_code")
+                }
+            )
 
             val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
             respond(
@@ -118,7 +119,8 @@ fun mockPolarAccessTokenRequest(
                             "expires_in": $expiresIn,
                             "x_user_id": $userId
                         }
-                    """.trimIndent(), headers = responseHeaders
+                """.trimIndent(),
+                headers = responseHeaders
             )
         }
         "https://www.polaraccesslink.com/v3/users" -> {
@@ -148,14 +150,13 @@ fun mockPolarAccessTokenRequest(
                             }
                           ]
                         }
-                    """.trimIndent(), headers = responseHeaders
+                """.trimIndent(),
+                headers = responseHeaders
             )
-
         }
         else -> error("Unhandled ${request.url.fullUrl}")
     }
 }
-
 
 fun mockGoogleAccessTokenRequest(
     code: String,
@@ -171,13 +172,15 @@ fun mockGoogleAccessTokenRequest(
             assertThat(request.method).isEqualTo(HttpMethod.Post)
             assertThat(request.body.contentType.toString()).isEqualTo("application/x-www-form-urlencoded; charset=UTF-8")
             assertThat(request.body).isInstanceOf(FormDataContent::class)
-            assertThat((request.body as FormDataContent).formData).isEqualTo(Parameters.build {
-                append("code", code)
-                append("client_id", clientId)
-                append("client_secret", clientSecret)
-                append("grant_type", "authorization_code")
-                append("redirect_uri", "http://localhost:8080/callback/google")
-            })
+            assertThat((request.body as FormDataContent).formData).isEqualTo(
+                Parameters.build {
+                    append("code", code)
+                    append("client_id", clientId)
+                    append("client_secret", clientSecret)
+                    append("grant_type", "authorization_code")
+                    append("redirect_uri", "http://localhost:8080/callback/google")
+                }
+            )
 
             val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
             respond(
@@ -189,10 +192,10 @@ fun mockGoogleAccessTokenRequest(
                             "scope": "https://www.googleapis.com/auth/fitness.sleep.write",
                              "refresh_token": "$refreshToken"
                         }
-                    """.trimIndent(), headers = responseHeaders
+                """.trimIndent(),
+                headers = responseHeaders
             )
         }
         else -> error("Unhandled ${request.url.fullUrl}")
     }
 }
-

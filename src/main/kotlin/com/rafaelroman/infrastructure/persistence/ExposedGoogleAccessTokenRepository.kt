@@ -46,11 +46,9 @@ class ExposedGoogleAccessTokenRepository(private val db: Database) : GoogleAcces
                 } else {
                     null
                 }
-
             }
     }
 }
-
 
 object GoogleAccessTokenTable : LongIdTable() {
     val accessToken = varchar("accessToken", 256)
@@ -64,5 +62,4 @@ class GoogleAccessTokenDao(userId: EntityID<Long>) : LongEntity(userId) {
     var accessToken by GoogleAccessTokenTable.accessToken
     var expiresIn by GoogleAccessTokenTable.expiresIn
     var refreshToken by GoogleAccessTokenTable.refreshToken
-
 }

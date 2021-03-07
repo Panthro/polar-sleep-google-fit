@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 
 internal class CurrentStatusUseCaseTest {
 
-
     @Test
     fun `should return google authenticated and polar authenticated`() = runBlocking {
         // Arrange

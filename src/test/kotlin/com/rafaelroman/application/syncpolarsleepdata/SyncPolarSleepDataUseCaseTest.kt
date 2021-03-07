@@ -11,9 +11,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
-
 internal class SyncPolarSleepDataUseCaseTest {
-
 
     @Test
     fun `should download data from polar and sync to google fit`() = runBlocking {
@@ -36,5 +34,3 @@ internal class SyncPolarSleepDataUseCaseTest {
         assertThat(result).isEqualTo(SyncPolarSleepDataSuccessfully)
     }
 }
-
-

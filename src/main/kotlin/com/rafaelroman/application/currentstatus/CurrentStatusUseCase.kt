@@ -21,7 +21,6 @@ class CurrentStatusUseCase(
         ).also {
             logger.info("process=current-status status=$it")
         }
-
     }
 }
 
@@ -39,4 +38,3 @@ sealed class PolarAuthStatus {
     object Authenticated : PolarAuthStatus()
     object Unauthenticated : PolarAuthStatus()
 }
-

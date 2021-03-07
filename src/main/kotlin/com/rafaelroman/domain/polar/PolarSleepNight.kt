@@ -2,7 +2,6 @@ package com.rafaelroman.domain.polar
 
 import io.ktor.http.Url
 
-
 data class PolarSleepNight(
     val polarUser: Url,
     val date: String,

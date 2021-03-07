@@ -31,7 +31,6 @@ class HttpGoogleAccessTokenProvider(
         }.toGoogleAccessToken()
 }
 
-
 private data class GoogleAccessTokenHttpResponse(
     @SerializedName("access_token")
     val accessToken: String,

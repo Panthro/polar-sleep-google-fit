@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 
 internal class InMemoryPolarAccessTokenRepositoryTest {
 
-
     @Test
     fun `should save polar access token`() = runBlocking {
         // Arrange

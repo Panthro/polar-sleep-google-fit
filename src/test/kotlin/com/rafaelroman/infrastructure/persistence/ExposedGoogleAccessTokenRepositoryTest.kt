@@ -15,7 +15,6 @@ internal class ExposedGoogleAccessTokenRepositoryTest {
         val googleAccessToken = buildGoogleAccessToken()
         val repository = ExposedGoogleAccessTokenRepository(db)
 
-
         // Act
         repository save googleAccessToken
         // Assert

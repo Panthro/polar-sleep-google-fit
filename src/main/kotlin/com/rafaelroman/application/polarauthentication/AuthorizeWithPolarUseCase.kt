@@ -19,7 +19,6 @@ class AuthorizeWithPolarUseCase(
             }
             .let { polarAccessTokenRepository save it }
             .let { AuthorizeWithPolarSuccessfully }
-
 }
 
 object AuthorizeWithPolarSuccessfully

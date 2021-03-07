@@ -49,12 +49,10 @@ class ApplicationTest {
                     accessToken = UUID.randomUUID().toString()
                     refreshToken = UUID.randomUUID().toString()
                     expiresIn = 1000
-
                 }
                 PolarAccessTokenDao.new(SecureRandom().nextLong()) {
                     accessToken = UUID.randomUUID().toString()
                     expiresIn = 1000
-
                 }
             }
             handleRequest(HttpMethod.Get, "/").apply {

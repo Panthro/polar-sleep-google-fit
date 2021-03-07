@@ -37,7 +37,8 @@ class HttpPolarClient(
                 Parameters.build {
                     append("code", polarAuthorizationRequestCode.value)
                     append("grant_type", "authorization_code")
-                })
+                }
+            )
         }
             .toPolarAccessToken()
             .also {
@@ -79,15 +80,13 @@ private data class PolarAccessTokenHttpResponse(
     @SerializedName("x_user_id")
     val userId: Long,
 
-
-    ) {
+) {
     fun toPolarAccessToken(): PolarAccessToken = PolarAccessToken(
         accessToken = accessToken,
         expiresIn = expiresInSeconds,
         userId = userId
     )
 }
-
 
 data class HttpPolarSleepNightsResponse(
 
@@ -192,4 +191,3 @@ data class HttpPolarSleepNight(
 
     )
 }
-

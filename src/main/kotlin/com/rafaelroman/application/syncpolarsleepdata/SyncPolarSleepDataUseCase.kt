@@ -17,7 +17,7 @@ class SyncPolarSleepDataUseCase(
         }.apply {
             logger.info("process=sync-polar-nights status=nights-returned nights=${this.size}")
         }
-        //TODO sync with google
+        // TODO sync with google
         return SyncPolarSleepDataSuccessfully
     }
 }

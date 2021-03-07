@@ -17,7 +17,6 @@ import java.util.UUID
 
 internal class AuthorizeWithPolarUseCaseTest {
 
-
     @Test
     fun `should authorise with polar`() = runBlocking {
         // Arrange
@@ -44,6 +43,5 @@ internal class AuthorizeWithPolarUseCaseTest {
         coVerify {
             polarAccessTokenRepository.save(polarAccessToken)
         }
-
     }
 }

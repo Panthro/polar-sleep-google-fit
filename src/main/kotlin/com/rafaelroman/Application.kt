@@ -46,10 +46,8 @@ import org.slf4j.event.Level
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
-
 const val DATABASE_URL = "jdbc:h2:file:./db"
 const val DATABASE_DRIVER = "org.h2.Driver"
-
 
 fun ApplicationConfig.orDefault(path: String, default: String): String = propertyOrNull(path)?.getString() ?: default
 fun ApplicationConfig.required(path: String): String = propertyOrNull(path)!!.getString()
@@ -98,7 +96,6 @@ fun Application.module(testing: Boolean = false) {
 
     val currentStatusUseCase = CurrentStatusUseCase(googleAccessTokenRepository, polarAccessTokenRepository)
 
-
     install(Locations) {
     }
     install(CallLogging) {
@@ -109,8 +106,8 @@ fun Application.module(testing: Boolean = false) {
     routing {
         get("/") {
             val (googleAuthStatus, polarAuthStatus) = currentStatusUseCase.status()
-            val fullAuthentication = googleAuthStatus is GoogleAuthStatus.Authenticated
-                && polarAuthStatus is PolarAuthStatus.Authenticated
+            val fullAuthentication = googleAuthStatus is GoogleAuthStatus.Authenticated &&
+                polarAuthStatus is PolarAuthStatus.Authenticated
 
             call.respondHtml {
                 head {
@@ -154,8 +151,6 @@ fun Application.module(testing: Boolean = false) {
                                 }
                             }
                         }
-
-
                     }
                 }
             }
@@ -186,5 +181,3 @@ class GoogleAuthenticationCallbackLocation(val code: String)
 
 @Location("/sync/sleep")
 class SyncSleepLocation
-
-

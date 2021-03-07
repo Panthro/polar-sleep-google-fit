@@ -51,7 +51,7 @@ class ExposedPolarAccessTokenRepository(
 }
 
 object PolarAccessTokenTable : IdTable<Long>() {
-    val accessToken = varchar("accessToken", 50)
+    val accessToken = varchar("accessToken", 120)
     val expiresIn = long("expiresIn")
     val polarUserId = long("polarUserId").entityId()
 

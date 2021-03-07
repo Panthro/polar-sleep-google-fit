@@ -20,16 +20,15 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.config.ApplicationConfig
 import io.ktor.html.respondHtml
 import io.ktor.response.*
 import io.ktor.request.*
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.br
-import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.head
-import kotlinx.html.onClick
 import kotlinx.html.span
 import kotlinx.html.title
 import org.jetbrains.exposed.sql.Database
@@ -37,6 +36,9 @@ import org.jetbrains.exposed.sql.Database
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
+
+const val DATABASE_URL = "jdbc:h2:file:./db"
+const val DATABASE_DRIVER = "org.h2.Driver"
 
 /**
  * Please note that you can use any other name instead of *module*.
@@ -51,13 +53,19 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    val db = Database.connect("jdbc:h2:file:./db", driver = "org.h2.Driver")
+    fun ApplicationConfig.orDefault(path: String, default: String): String = propertyOrNull(path)?.getString() ?: default
+    fun ApplicationConfig.required(path: String): String = propertyOrNull(path)!!.getString()
 
-    val polarClientId = environment.config.property("polar.oauth2.clientId").getString()
-    val polarClientSecret = environment.config.property("polar.oauth2.clientSecret").getString()
+    val db = Database.connect(
+        url = environment.config.orDefault("db.url", DATABASE_URL),
+        driver = environment.config.orDefault("db.driver", DATABASE_DRIVER)
+    )
 
-    val googleClientId = environment.config.property("google.oauth2.clientId").getString()
-    val googleClientSecret = environment.config.property("google.oauth2.clientSecret").getString()
+    val polarClientId = environment.config.required("polar.oauth2.clientId")
+    val polarClientSecret = environment.config.required("polar.oauth2.clientSecret")
+
+    val googleClientId = environment.config.required("google.oauth2.clientId")
+    val googleClientSecret = environment.config.required("google.oauth2.clientSecret")
 
     val polarHttpClient = HttpPolarClient(
         client,
@@ -80,10 +88,6 @@ fun Application.module(testing: Boolean = false) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }
     }
-//    install(ContentNegotiation) {
-//        json()
-//    }
-
 
     routing {
         get("/") {

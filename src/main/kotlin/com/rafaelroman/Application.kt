@@ -15,8 +15,18 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.html.respondHtml
 import io.ktor.response.*
 import io.ktor.request.*
+import kotlinx.html.a
+import kotlinx.html.body
+import kotlinx.html.br
+import kotlinx.html.button
+import kotlinx.html.div
+import kotlinx.html.head
+import kotlinx.html.onClick
+import kotlinx.html.span
+import kotlinx.html.title
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -34,10 +44,17 @@ fun Application.module(testing: Boolean = false) {
             serializer = GsonSerializer()
         }
     }
+
+    val polarClientId = environment.config.property("polar.oauth2.clientId").getString()
+    val polarClientSecret = environment.config.property("polar.oauth2.clientSecret").getString()
+
+    val googleClientId = environment.config.property("google.oauth2.clientId").getString()
+    val googleClientSecret = environment.config.property("google.oauth2.clientSecret").getString()
+
     val polarHttpClient = HttpPolarClient(
         client,
-        clientId = environment.config.property("polar.oauth2.clientId").getString(),
-        clientSecret = environment.config.property("polar.oauth2.clientSecret").getString()
+        clientId = polarClientId,
+        clientSecret = polarClientSecret
     )
     val polarAccessTokenRepository: PolarAccessTokenRepository = ExposedPolarAccessTokenRepository()
 
@@ -59,13 +76,41 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         get("/") {
-            call.respondText("Hello World!")
+            call.respondHtml {
+                head {
+                    title("Polar sleep sync")
+                }
+                body {
+                    div {
+                        a {
+                            href = "https://flow.polar.com/oauth2/authorization?response_type=code&client_id=$polarClientId"
+                            span { +"Connect polar" }
+                        }
+                        br { }
+                        a {
+                            href = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
+                                    "redirect_uri=http://localhost:8080/callback/google" +
+                                    "&prompt=consent" +
+                                    "&response_type=code" +
+                                    "&client_id=$googleClientId" +
+                                    "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
+                                    "&access_type=offline" +
+                                    "&flowName=GeneralOAuthFlow"
+                            span { +"Connect Google" }
+                        }
+                    }
+                }
+            }
         }
     }
     routing {
         get<PolarAuthenticationCallback> { callback ->
             authorizeWithPolarUseCase authorize PolarAuthorizationRequestCode(callback.code)
             call.respondText("Polar connected")
+        }
+        get<GoogleAuthenticationCallback> { callback ->
+
+            call.respondText("Google code ${callback.code}")
         }
 
         get<PolarSleepRequest> {
@@ -75,8 +120,11 @@ fun Application.module(testing: Boolean = false) {
     }
 }
 
-@Location("/callback")
+@Location("/callback/polar")
 class PolarAuthenticationCallback(val code: String)
+
+@Location("/callback/google")
+class GoogleAuthenticationCallback(val code: String)
 
 @Location("/sync/sleep")
 class PolarSleepRequest()

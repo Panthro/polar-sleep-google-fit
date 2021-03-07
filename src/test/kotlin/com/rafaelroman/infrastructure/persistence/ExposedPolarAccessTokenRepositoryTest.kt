@@ -3,7 +3,6 @@ package com.rafaelroman.infrastructure.persistence
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.rafaelroman.fixtures.buildPolarAccessToken
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class ExposedPolarAccessTokenRepositoryTest{

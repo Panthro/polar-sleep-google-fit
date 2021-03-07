@@ -1,10 +1,13 @@
 package com.rafaelroman
 
+import com.rafaelroman.application.googleauth.AuthorizeWithGoogleUseCase
 import com.rafaelroman.application.polarauthentication.AuthorizeWithPolarUseCase
 import com.rafaelroman.application.syncpolarsleepdata.SyncPolarSleepDataUseCase
 import com.rafaelroman.domain.googlefit.GoogleAccessTokenRepository
+import com.rafaelroman.domain.googlefit.GoogleAuthorizationRequestCode
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
+import com.rafaelroman.infrastructure.clients.HttpGoogleAccessTokenProvider
 import com.rafaelroman.infrastructure.clients.HttpPolarClient
 import com.rafaelroman.infrastructure.persistence.ExposedGoogleAccessTokenRepository
 import com.rafaelroman.infrastructure.persistence.ExposedPolarAccessTokenRepository
@@ -61,10 +64,12 @@ fun Application.module(testing: Boolean = false) {
         clientId = polarClientId,
         clientSecret = polarClientSecret
     )
+    val googleHttpClient = HttpGoogleAccessTokenProvider(client, clientId = googleClientId, clientSecret = googleClientSecret)
     val polarAccessTokenRepository: PolarAccessTokenRepository = ExposedPolarAccessTokenRepository(db)
     val googleAccessTokenRepository: GoogleAccessTokenRepository = ExposedGoogleAccessTokenRepository(db)
 
     val authorizeWithPolarUseCase = AuthorizeWithPolarUseCase(polarHttpClient, polarAccessTokenRepository)
+    val authorizeWithGoogleUseCase = AuthorizeWithGoogleUseCase(googleHttpClient, googleAccessTokenRepository)
 
     val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient)
 
@@ -115,8 +120,8 @@ fun Application.module(testing: Boolean = false) {
             call.respondText("Polar connected")
         }
         get<GoogleAuthenticationCallback> { callback ->
-
-            call.respondText("Google code ${callback.code}")
+            authorizeWithGoogleUseCase authorize GoogleAuthorizationRequestCode(callback.code)
+            call.respondText("Google connected")
         }
 
         get<PolarSleepRequest> {

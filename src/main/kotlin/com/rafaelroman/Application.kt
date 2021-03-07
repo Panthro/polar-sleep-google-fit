@@ -1,5 +1,8 @@
 package com.rafaelroman
 
+import com.rafaelroman.application.currentstatus.CurrentStatusUseCase
+import com.rafaelroman.application.currentstatus.GoogleAuthStatus
+import com.rafaelroman.application.currentstatus.PolarAuthStatus
 import com.rafaelroman.application.googleauth.AuthorizeWithGoogleUseCase
 import com.rafaelroman.application.polarauthentication.AuthorizeWithPolarUseCase
 import com.rafaelroman.application.syncpolarsleepdata.SyncPolarSleepDataUseCase
@@ -40,6 +43,10 @@ fun main(args: Array<String>): Unit =
 const val DATABASE_URL = "jdbc:h2:file:./db"
 const val DATABASE_DRIVER = "org.h2.Driver"
 
+
+fun ApplicationConfig.orDefault(path: String, default: String): String = propertyOrNull(path)?.getString() ?: default
+fun ApplicationConfig.required(path: String): String = propertyOrNull(path)!!.getString()
+
 /**
  * Please note that you can use any other name instead of *module*.
  * Also note that you can have more then one modules in your application.
@@ -47,19 +54,20 @@ const val DATABASE_DRIVER = "org.h2.Driver"
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
-    val client = HttpClient(CIO) {
-        install(JsonFeature) {
-            serializer = GsonSerializer()
+    val client by lazy {
+        HttpClient(CIO) {
+            install(JsonFeature) {
+                serializer = GsonSerializer()
+            }
         }
     }
 
-    fun ApplicationConfig.orDefault(path: String, default: String): String = propertyOrNull(path)?.getString() ?: default
-    fun ApplicationConfig.required(path: String): String = propertyOrNull(path)!!.getString()
-
-    val db = Database.connect(
-        url = environment.config.orDefault("db.url", DATABASE_URL),
-        driver = environment.config.orDefault("db.driver", DATABASE_DRIVER)
-    )
+    val db by lazy {
+        Database.connect(
+            url = environment.config.orDefault("db.url", DATABASE_URL),
+            driver = environment.config.orDefault("db.driver", DATABASE_DRIVER)
+        )
+    }
 
     val polarClientId = environment.config.required("polar.oauth2.clientId")
     val polarClientSecret = environment.config.required("polar.oauth2.clientSecret")
@@ -81,6 +89,8 @@ fun Application.module(testing: Boolean = false) {
 
     val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient)
 
+    val currentStatusUseCase = CurrentStatusUseCase(googleAccessTokenRepository, polarAccessTokenRepository)
+
 
     install(Locations) {
     }
@@ -91,44 +101,70 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         get("/") {
+            val (googleAuthStatus, polarAuthStatus) = currentStatusUseCase.status()
+            val fullAuthentication = googleAuthStatus is GoogleAuthStatus.Authenticated
+                    && polarAuthStatus is PolarAuthStatus.Authenticated
+
             call.respondHtml {
                 head {
                     title("Polar sleep sync")
                 }
                 body {
                     div {
-                        a {
-                            href = "https://flow.polar.com/oauth2/authorization?response_type=code&client_id=$polarClientId"
-                            span { +"Connect polar" }
+                        div {
+                            when (polarAuthStatus) {
+                                PolarAuthStatus.Authenticated -> span { +"Polar connected" }
+                                PolarAuthStatus.Unauthenticated -> a {
+                                    href = "https://flow.polar.com/oauth2/authorization?response_type=code&client_id=$polarClientId"
+                                    span { +"Connect polar" }
+                                }
+                            }
                         }
+
                         br { }
-                        a {
-                            href = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
-                                    "redirect_uri=http://localhost:8080/callback/google" +
-                                    "&prompt=consent" +
-                                    "&response_type=code" +
-                                    "&client_id=$googleClientId" +
-                                    "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
-                                    "&access_type=offline" +
-                                    "&flowName=GeneralOAuthFlow"
-                            span { +"Connect Google" }
+                        div {
+                            when (googleAuthStatus) {
+                                GoogleAuthStatus.Authenticated -> span { +"Google connected" }
+                                GoogleAuthStatus.Unauthenticated -> a {
+                                    href = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
+                                            "redirect_uri=http://localhost:8080/callback/google" +
+                                            "&prompt=consent" +
+                                            "&response_type=code" +
+                                            "&client_id=$googleClientId" +
+                                            "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
+                                            "&access_type=offline" +
+                                            "&flowName=GeneralOAuthFlow"
+                                    span { +"Connect Google" }
+                                }
+                            }
                         }
+                        br {}
+                        span {
+                            if (fullAuthentication) {
+                                a {
+                                    href = href(SyncSleepLocation())
+                                    span { +"Sync polar sleep data with Google fit" }
+                                }
+                            }
+                        }
+
+
                     }
                 }
             }
         }
     }
     routing {
-        get<PolarAuthenticationCallback> { callback ->
+        get<PolarAuthenticationCallbackLocation> { callback ->
             authorizeWithPolarUseCase authorize PolarAuthorizationRequestCode(callback.code)
-            call.respondText("Polar connected")
+            call.respondRedirect("/")
         }
-        get<GoogleAuthenticationCallback> { callback ->
+        get<GoogleAuthenticationCallbackLocation> { callback ->
             authorizeWithGoogleUseCase authorize GoogleAuthorizationRequestCode(callback.code)
-            call.respondText("Google connected")
+            call.respondRedirect("/")
         }
 
-        get<PolarSleepRequest> {
+        get<SyncSleepLocation> {
             syncPolarSleepDataUseCase.sync()
             call.respondText { "Sync successfully" }
         }
@@ -136,12 +172,12 @@ fun Application.module(testing: Boolean = false) {
 }
 
 @Location("/callback/polar")
-class PolarAuthenticationCallback(val code: String)
+class PolarAuthenticationCallbackLocation(val code: String)
 
 @Location("/callback/google")
-class GoogleAuthenticationCallback(val code: String)
+class GoogleAuthenticationCallbackLocation(val code: String)
 
 @Location("/sync/sleep")
-class PolarSleepRequest()
+class SyncSleepLocation()
 
 

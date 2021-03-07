@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import com.rafaelroman.domain.googlefit.GoogleAccessToken
 import com.rafaelroman.domain.googlefit.GoogleAccessTokenProvider
 import com.rafaelroman.domain.googlefit.GoogleAuthorizationRequestCode
-import com.rafaelroman.domain.polar.PolarAccessToken
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
 import io.ktor.client.request.forms.FormDataContent

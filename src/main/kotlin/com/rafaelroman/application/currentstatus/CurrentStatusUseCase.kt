@@ -4,7 +4,6 @@ import com.rafaelroman.domain.googlefit.GoogleAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(CurrentStatusUseCase::class.java)

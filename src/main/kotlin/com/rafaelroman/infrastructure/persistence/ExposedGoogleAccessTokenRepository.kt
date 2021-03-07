@@ -47,7 +47,7 @@ class ExposedGoogleAccessTokenRepository(private val db: Database) : GoogleAcces
                     null
                 }
 
-        }
+            }
     }
 }
 

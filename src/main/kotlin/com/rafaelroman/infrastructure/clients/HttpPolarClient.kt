@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.rafaelroman.domain.polar.PolarAccessCodeProvider
 import com.rafaelroman.domain.polar.PolarAccessToken
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
-import com.rafaelroman.domain.polar.PolarSleepNight
 import com.rafaelroman.domain.polar.PolarSleepDataProvider
+import com.rafaelroman.domain.polar.PolarSleepNight
 import io.ktor.client.HttpClient
 import io.ktor.client.features.ClientRequestException
 import io.ktor.client.request.accept

@@ -15,7 +15,7 @@ internal class CurrentStatusUseCaseTest {
 
 
     @Test
-    fun `should return google authenticated and polar authenticated`() = runBlocking{
+    fun `should return google authenticated and polar authenticated`() = runBlocking {
         // Arrange
         val googleAccessTokenRepository: GoogleAccessTokenRepository = mockk()
         val polarAccessTokenRepository: PolarAccessTokenRepository = mockk()
@@ -39,8 +39,9 @@ internal class CurrentStatusUseCaseTest {
             )
         )
     }
+
     @Test
-    fun `should return google unauthenticated and polar unauthenticated`() = runBlocking{
+    fun `should return google unauthenticated and polar unauthenticated`() = runBlocking {
         // Arrange
         val googleAccessTokenRepository: GoogleAccessTokenRepository = mockk()
         val polarAccessTokenRepository: PolarAccessTokenRepository = mockk()

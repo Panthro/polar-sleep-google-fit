@@ -19,7 +19,7 @@ internal class AuthorizeWithGoogleUseCaseTest {
 
 
     @Test
-    fun `should authorize with google`() = runBlocking{
+    fun `should authorize with google`() = runBlocking {
         // Arrange
         val authRequestCode = GoogleAuthorizationRequestCode(randomUUID().toString())
         val googleAccessToken = buildGoogleAccessToken()

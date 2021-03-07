@@ -7,10 +7,12 @@ import com.rafaelroman.infrastructure.persistence.GoogleAccessTokenDao
 import com.rafaelroman.infrastructure.persistence.GoogleAccessTokenTable
 import com.rafaelroman.infrastructure.persistence.PolarAccessTokenDao
 import com.rafaelroman.infrastructure.persistence.PolarAccessTokenTable
-import io.ktor.application.*
+import io.ktor.application.Application
 import io.ktor.config.MapApplicationConfig
-import io.ktor.http.*
-import io.ktor.server.testing.*
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.withTestApplication
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Test

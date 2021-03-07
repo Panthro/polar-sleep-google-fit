@@ -39,12 +39,16 @@ fun buildPolarNight() = PolarSleepNight(
     groupDurationScore = random.nextLong(),
     groupSolidityScore = random.nextLong(),
     groupRegenerationScore = random.nextDouble(),
-    hypnogram = mapOf("00:39" to 2,
+    hypnogram = mapOf(
+        "00:39" to 2,
         "00:50" to 3,
-        "01:23" to 6),
-    heartRateSamples = mapOf("00:41" to 76,
+        "01:23" to 6
+    ),
+    heartRateSamples = mapOf(
+        "00:41" to 76,
         "00:46" to 77,
-        "00:51" to 76),
+        "00:51" to 76
+    ),
 )
 
 fun buildGoogleAccessToken() = GoogleAccessToken(

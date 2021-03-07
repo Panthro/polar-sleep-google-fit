@@ -34,7 +34,8 @@ internal class HttpGoogleAccessTokenProviderTest {
         val provider = HttpGoogleAccessTokenProvider(
             client,
             clientId = clientId,
-            clientSecret = secret)
+            clientSecret = secret
+        )
         // Act
         val result = provider withCode googleRequestCode
         // Assert

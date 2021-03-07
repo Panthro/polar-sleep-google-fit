@@ -41,7 +41,8 @@ fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request 
             assertThat(request.headers["Authorization"]).isEqualTo("Bearer $accessToken")
 
             val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-            respond("""
+            respond(
+                """
                         {
                           "nights": [
                             {
@@ -80,7 +81,8 @@ fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request 
                             }
                           ]
                         }
-                    """.trimIndent(), headers = responseHeaders)
+                    """.trimIndent(), headers = responseHeaders
+            )
         }
         else -> error("Unhandled ${request.url.fullUrl}")
 
@@ -108,14 +110,16 @@ fun mockPolarAccessTokenRequest(
             })
 
             val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-            respond("""
+            respond(
+                """
                         {
                             "access_token": "$accessToken",
                             "token_type": "bearer",
                             "expires_in": $expiresIn,
                             "x_user_id": $userId
                         }
-                    """.trimIndent(), headers = responseHeaders)
+                    """.trimIndent(), headers = responseHeaders
+            )
         }
         "https://www.polaraccesslink.com/v3/users" -> {
             assertThat(request.method).isEqualTo(HttpMethod.Post)
@@ -124,7 +128,8 @@ fun mockPolarAccessTokenRequest(
             assertThat((request.body as TextContent).text).isEqualTo("{\"member-id\":\"${userId}\"}")
             val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
 
-            respond("""
+            respond(
+                """
                         {
                           "polar-user-id": 2278512,
                           "member-id": "i09u9ujj",
@@ -143,7 +148,8 @@ fun mockPolarAccessTokenRequest(
                             }
                           ]
                         }
-                    """.trimIndent(), headers = responseHeaders)
+                    """.trimIndent(), headers = responseHeaders
+            )
 
         }
         else -> error("Unhandled ${request.url.fullUrl}")
@@ -174,7 +180,8 @@ fun mockGoogleAccessTokenRequest(
             })
 
             val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-            respond("""
+            respond(
+                """
                         {
                             "access_token": "$accessToken",
                             "token_type": "Bearer", 
@@ -182,7 +189,8 @@ fun mockGoogleAccessTokenRequest(
                             "scope": "https://www.googleapis.com/auth/fitness.sleep.write",
                              "refresh_token": "$refreshToken"
                         }
-                    """.trimIndent(), headers = responseHeaders)
+                    """.trimIndent(), headers = responseHeaders
+            )
         }
         else -> error("Unhandled ${request.url.fullUrl}")
     }

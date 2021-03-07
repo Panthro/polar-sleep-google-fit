@@ -1,17 +1,16 @@
 package com.rafaelroman.infrastructure.persistence
 
 import assertk.assertThat
-import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import com.rafaelroman.fixtures.buildPolarAccessToken
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
-internal class InMemoryPolarAccessTokenRepositoryTest{
+internal class InMemoryPolarAccessTokenRepositoryTest {
 
 
     @Test
-    fun `should save polar access token`() = runBlocking{
+    fun `should save polar access token`() = runBlocking {
         // Arrange
         val polarAccessToken = buildPolarAccessToken()
         val repository = InMemoryPolarAccessTokenRepository()

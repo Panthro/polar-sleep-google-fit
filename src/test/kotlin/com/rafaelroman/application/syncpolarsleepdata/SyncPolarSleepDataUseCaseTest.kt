@@ -7,7 +7,6 @@ import com.rafaelroman.domain.polar.PolarSleepDataProvider
 import com.rafaelroman.fixtures.buildPolarAccessToken
 import com.rafaelroman.fixtures.buildPolarNight
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

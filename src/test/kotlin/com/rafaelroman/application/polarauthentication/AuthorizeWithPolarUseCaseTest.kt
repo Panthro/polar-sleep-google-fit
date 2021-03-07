@@ -2,19 +2,15 @@ package com.rafaelroman.application.polarauthentication
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
 import com.rafaelroman.domain.polar.PolarAccessCodeProvider
-import com.rafaelroman.domain.polar.PolarAccessToken
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
+import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
 import com.rafaelroman.fixtures.buildPolarAccessToken
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.just
-import io.mockk.justRun
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import java.util.UUID

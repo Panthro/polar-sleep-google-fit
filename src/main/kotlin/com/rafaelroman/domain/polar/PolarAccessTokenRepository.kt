@@ -1,7 +1,7 @@
 package com.rafaelroman.domain.polar
 
 interface PolarAccessTokenRepository {
-    infix fun save(polarAccessToken: PolarAccessToken)
-    fun current(): PolarAccessToken?
+    suspend infix fun save(polarAccessToken: PolarAccessToken)
+    suspend fun current(): PolarAccessToken?
 
 }

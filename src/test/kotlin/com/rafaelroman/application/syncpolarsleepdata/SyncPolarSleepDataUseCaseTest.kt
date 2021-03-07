@@ -17,14 +17,14 @@ internal class SyncPolarSleepDataUseCaseTest {
 
 
     @Test
-    fun `should download data from polar and sync to google fit`() = runBlocking{
+    fun `should download data from polar and sync to google fit`() = runBlocking {
         // Arrange
         val polarAccessTokenRepository = mockk<PolarAccessTokenRepository>()
         val polarSleepDataProvider = mockk<PolarSleepDataProvider>()
         val usecase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarSleepDataProvider)
         val polarAccessToken = buildPolarAccessToken()
         val polarNights = listOf(buildPolarNight(), buildPolarNight())
-        every {
+        coEvery {
             polarAccessTokenRepository.current()
         } returns polarAccessToken
 

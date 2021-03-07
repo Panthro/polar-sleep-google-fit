@@ -9,6 +9,7 @@ import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import com.rafaelroman.fixtures.buildPolarAccessToken
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.justRun
@@ -44,7 +45,7 @@ internal class AuthorizeWithPolarUseCaseTest {
 
         // Assert
         assertThat(result).isEqualTo(AuthorizeWithPolarSuccessfully)
-        verify {
+        coVerify {
             polarAccessTokenRepository.save(polarAccessToken)
         }
 

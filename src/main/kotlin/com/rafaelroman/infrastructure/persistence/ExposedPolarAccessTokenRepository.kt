@@ -15,18 +15,19 @@ import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
-class ExposedPolarAccessTokenRepository : PolarAccessTokenRepository {
+class ExposedPolarAccessTokenRepository(
+    private val db: Database
+) : PolarAccessTokenRepository {
 
     init {
-        Database.connect("jdbc:h2:file:./db", driver = "org.h2.Driver")
-        transaction {
+        transaction(db) {
             addLogger(StdOutSqlLogger)
             SchemaUtils.create(PolarAccessTokenTable)
         }
     }
 
-    override fun save(polarAccessToken: PolarAccessToken) {
-        transaction {
+    override suspend fun save(polarAccessToken: PolarAccessToken) {
+        transaction(db) {
             addLogger(StdOutSqlLogger)
             PolarAccessTokenTable.deleteAll()
             PolarAccessTokenDao.new(polarAccessToken.userId) {
@@ -36,8 +37,8 @@ class ExposedPolarAccessTokenRepository : PolarAccessTokenRepository {
         }
     }
 
-    override fun current(): PolarAccessToken = transaction {
-        PolarAccessTokenDao.all()
+    override suspend fun current(): PolarAccessToken = transaction(db) {
+        PolarAccessTokenDao.all().limit(1)
             .first()
             .let {
                 PolarAccessToken(

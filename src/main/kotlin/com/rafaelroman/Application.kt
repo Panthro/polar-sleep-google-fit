@@ -2,9 +2,11 @@ package com.rafaelroman
 
 import com.rafaelroman.application.polarauthentication.AuthorizeWithPolarUseCase
 import com.rafaelroman.application.syncpolarsleepdata.SyncPolarSleepDataUseCase
+import com.rafaelroman.domain.googlefit.GoogleAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
 import com.rafaelroman.infrastructure.clients.HttpPolarClient
+import com.rafaelroman.infrastructure.persistence.ExposedGoogleAccessTokenRepository
 import com.rafaelroman.infrastructure.persistence.ExposedPolarAccessTokenRepository
 import io.ktor.routing.*
 import io.ktor.locations.*
@@ -27,6 +29,7 @@ import kotlinx.html.head
 import kotlinx.html.onClick
 import kotlinx.html.span
 import kotlinx.html.title
+import org.jetbrains.exposed.sql.Database
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -45,6 +48,8 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
+    val db = Database.connect("jdbc:h2:file:./db", driver = "org.h2.Driver")
+
     val polarClientId = environment.config.property("polar.oauth2.clientId").getString()
     val polarClientSecret = environment.config.property("polar.oauth2.clientSecret").getString()
 
@@ -56,7 +61,8 @@ fun Application.module(testing: Boolean = false) {
         clientId = polarClientId,
         clientSecret = polarClientSecret
     )
-    val polarAccessTokenRepository: PolarAccessTokenRepository = ExposedPolarAccessTokenRepository()
+    val polarAccessTokenRepository: PolarAccessTokenRepository = ExposedPolarAccessTokenRepository(db)
+    val googleAccessTokenRepository: GoogleAccessTokenRepository = ExposedGoogleAccessTokenRepository(db)
 
     val authorizeWithPolarUseCase = AuthorizeWithPolarUseCase(polarHttpClient, polarAccessTokenRepository)
 

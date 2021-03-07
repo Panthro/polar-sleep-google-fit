@@ -1,5 +1,6 @@
 package com.rafaelroman.fixtures
 
+import com.rafaelroman.domain.googlefit.GoogleAccessToken
 import com.rafaelroman.domain.polar.PolarAccessToken
 import com.rafaelroman.domain.polar.PolarSleepNight
 import io.ktor.http.Url
@@ -44,4 +45,10 @@ fun buildPolarNight() = PolarSleepNight(
     heartRateSamples = mapOf("00:41" to 76,
         "00:46" to 77,
         "00:51" to 76),
+)
+
+fun buildGoogleAccessToken() = GoogleAccessToken(
+    accessToken = UUID.randomUUID().toString(),
+    expiresInSeconds = SecureRandom().nextLong(),
+    refreshToken = UUID.randomUUID().toString(),
 )

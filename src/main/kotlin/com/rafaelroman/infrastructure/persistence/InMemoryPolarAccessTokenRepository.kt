@@ -8,10 +8,10 @@ class InMemoryPolarAccessTokenRepository : PolarAccessTokenRepository {
     private var current: PolarAccessToken? = null
 
 
-    override fun save(polarAccessToken: PolarAccessToken) {
+    override suspend fun save(polarAccessToken: PolarAccessToken) {
         current = polarAccessToken
     }
 
-    override fun current(): PolarAccessToken? = current
+    override suspend fun current(): PolarAccessToken? = current
 
 }

@@ -150,3 +150,41 @@ fun mockPolarAccessTokenRequest(
     }
 }
 
+
+fun mockGoogleAccessTokenRequest(
+    code: String,
+    accessToken: String,
+    expiresIn: Long,
+    refreshToken: String,
+    clientId: String,
+    clientSecret: String,
+): MockRequestHandler = { request ->
+    when (request.url.fullUrl) {
+        "https://oauth2.googleapis.com/token" -> {
+
+            assertThat(request.method).isEqualTo(HttpMethod.Post)
+            assertThat(request.body.contentType.toString()).isEqualTo("application/x-www-form-urlencoded; charset=UTF-8")
+            assertThat(request.body).isInstanceOf(FormDataContent::class)
+            assertThat((request.body as FormDataContent).formData).isEqualTo(Parameters.build {
+                append("code", code)
+                append("client_id", clientId)
+                append("client_secret", clientSecret)
+                append("grant_type", "authorization_code")
+                append("redirect_uri", "http://localhost:8080/callback/google")
+            })
+
+            val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+            respond("""
+                        {
+                            "access_token": "$accessToken",
+                            "token_type": "Bearer", 
+                            "expires_in": $expiresIn,
+                            "scope": "https://www.googleapis.com/auth/fitness.sleep.write",
+                             "refresh_token": "$refreshToken"
+                        }
+                    """.trimIndent(), headers = responseHeaders)
+        }
+        else -> error("Unhandled ${request.url.fullUrl}")
+    }
+}
+

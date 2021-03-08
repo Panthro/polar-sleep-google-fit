@@ -74,7 +74,6 @@ private data class GoogleAccessTokenHttpResponse(
     )
 }
 
-
 private data class GoogleFitPutSleepSessionHttpRequest(
 
     @SerializedName("id") val id: String,
@@ -87,8 +86,7 @@ private data class GoogleFitPutSleepSessionHttpRequest(
     @SerializedName("version") val version: Int = 1,
     @SerializedName("activityType") val activityType: Int = 72,
 
-
-    ) {
+) {
     private data class Application(
 
         @SerializedName("detailsUrl") val detailsUrl: String = "https://flow.polar.com",
@@ -96,4 +94,3 @@ private data class GoogleFitPutSleepSessionHttpRequest(
         @SerializedName("version") val version: String = "1.0",
     )
 }
-

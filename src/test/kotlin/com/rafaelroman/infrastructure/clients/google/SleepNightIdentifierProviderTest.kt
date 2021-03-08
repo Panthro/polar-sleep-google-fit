@@ -6,8 +6,7 @@ import assertk.assertions.isNotEqualTo
 import com.rafaelroman.fixtures.buildSleepNight
 import org.junit.jupiter.api.Test
 
-internal class SleepNightIdentifierProviderTest{
-
+internal class SleepNightIdentifierProviderTest {
 
     @Test
     fun `should provide the same id given the same sleep night`() {

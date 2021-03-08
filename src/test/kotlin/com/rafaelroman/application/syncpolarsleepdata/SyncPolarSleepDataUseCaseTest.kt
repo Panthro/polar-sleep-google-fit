@@ -10,12 +10,9 @@ import com.rafaelroman.domain.polar.PolarSleepDataProvider
 import com.rafaelroman.fixtures.buildGoogleAccessToken
 import com.rafaelroman.fixtures.buildPolarAccessToken
 import com.rafaelroman.fixtures.buildSleepNight
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 

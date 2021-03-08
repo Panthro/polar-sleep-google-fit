@@ -205,8 +205,6 @@ fun mockGoogleAccessTokenRequest(
     }
 }
 
-
-
 fun mockGooglePutSleepNight(
     accessToken: String,
     identifier: String,
@@ -224,18 +222,18 @@ fun mockGooglePutSleepNight(
             assertThat(request.body.contentType).isEqualTo(ContentType.Application.Json)
             assertThat((request.body as TextContent).text).isEqualTo(
                 "{\"id\":\"$identifier\"" +
-                        ",\"name\":\"$sessionName\"" +
-                        ",\"description\":\"$description\"" +
-                        ",\"startTimeMillis\":$startTimeMillis" +
-                        ",\"endTimeMillis\":$endTimeMillis" +
-                        ",\"lastModifiedToken\":\"$lastModifiedToken\"" +
-                        ",\"application\":" +
-                        "{\"detailsUrl\":\"https://flow.polar.com\"" +
-                        ",\"name\":\"Polar flow\"" +
-                        ",\"version\":\"1.0\"}" +
-                        ",\"version\":1" +
-                        ",\"activityType\":72" +
-                        "}"
+                    ",\"name\":\"$sessionName\"" +
+                    ",\"description\":\"$description\"" +
+                    ",\"startTimeMillis\":$startTimeMillis" +
+                    ",\"endTimeMillis\":$endTimeMillis" +
+                    ",\"lastModifiedToken\":\"$lastModifiedToken\"" +
+                    ",\"application\":" +
+                    "{\"detailsUrl\":\"https://flow.polar.com\"" +
+                    ",\"name\":\"Polar flow\"" +
+                    ",\"version\":\"1.0\"}" +
+                    ",\"version\":1" +
+                    ",\"activityType\":72" +
+                    "}"
             )
             respondOk()
         }

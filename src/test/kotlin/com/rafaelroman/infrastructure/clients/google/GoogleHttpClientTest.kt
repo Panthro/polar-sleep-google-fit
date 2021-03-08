@@ -7,8 +7,8 @@ import com.rafaelroman.domain.googlefit.GoogleFitSleepNightPublished
 import com.rafaelroman.fixtures.buildGoogleAccessToken
 import com.rafaelroman.fixtures.buildSleepNight
 import com.rafaelroman.fixtures.mockGoogleAccessTokenRequest
-import com.rafaelroman.fixtures.mockHttpClient
 import com.rafaelroman.fixtures.mockGooglePutSleepNight
+import com.rafaelroman.fixtures.mockHttpClient
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -79,7 +79,4 @@ internal class GoogleHttpClientTest {
         // Assert
         assertThat(result).isEqualTo(GoogleFitSleepNightPublished)
     }
-
-
 }
-

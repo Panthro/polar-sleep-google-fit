@@ -33,7 +33,11 @@ fun mockHttpClient(handler: MockRequestHandler) = HttpClient(MockEngine) {
 val Url.hostWithPortIfRequired: String get() = if (port == protocol.defaultPort) host else hostWithPort
 val Url.fullUrl: String get() = "${protocol.name}://$hostWithPortIfRequired$fullPath"
 
-fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request ->
+fun mockPolarNightsRequest(
+    accessToken: String,
+    sleepStartTime: String,
+    sleepEndTime: String
+): MockRequestHandler = { request ->
     when (request.url.fullUrl) {
         "https://www.polaraccesslink.com/v3/users/sleep" -> {
 
@@ -47,8 +51,8 @@ fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request 
                             {
                               "polar_user": "https://www.polaraccesslink/v3/users/1",
                               "date": "2020-01-01",
-                              "sleep_start_time": "2020-01-01T00:39:07+03:00",
-                              "sleep_end_time": "2020-01-01T09:19:37+03:00",
+                              "sleep_start_time": "$sleepStartTime",
+                              "sleep_end_time": "$sleepEndTime",
                               "device_id": "1111AAAA",
                               "continuity": 2.1,
                               "continuity_class": 2,

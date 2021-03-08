@@ -5,7 +5,7 @@ import com.rafaelroman.domain.polar.PolarAccessCodeProvider
 import com.rafaelroman.domain.polar.PolarAccessToken
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
 import com.rafaelroman.domain.polar.PolarSleepDataProvider
-import com.rafaelroman.domain.polar.PolarSleepNight
+import com.rafaelroman.domain.sleep.SleepNight
 import io.ktor.client.HttpClient
 import io.ktor.client.features.ClientRequestException
 import io.ktor.client.request.accept
@@ -16,9 +16,10 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.Parameters
-import io.ktor.http.Url
 import io.ktor.http.contentType
 import org.slf4j.LoggerFactory
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Base64
 
 private val logger = LoggerFactory.getLogger(HttpPolarClient::class.java)
@@ -57,11 +58,11 @@ class HttpPolarClient(
                 }
             }
 
-    override suspend fun latest(polarAccessToken: PolarAccessToken): List<PolarSleepNight> =
+    override suspend fun latest(polarAccessToken: PolarAccessToken): List<SleepNight> =
         client.get<HttpPolarSleepNightsResponse>("https://www.polaraccesslink.com/v3/users/sleep") {
             header("Authorization", "Bearer ${polarAccessToken.accessToken}")
         }.nights.map {
-            it.toPolarSleepNight()
+            it.toSleepNight()
         }
 }
 
@@ -80,7 +81,7 @@ private data class PolarAccessTokenHttpResponse(
     @SerializedName("x_user_id")
     val userId: Long,
 
-) {
+    ) {
     fun toPolarAccessToken(): PolarAccessToken = PolarAccessToken(
         accessToken = accessToken,
         expiresIn = expiresInSeconds,
@@ -163,31 +164,10 @@ data class HttpPolarSleepNight(
     @SerializedName("heart_rate_samples")
     val heartRateSamples: Map<String, Long>,
 ) {
-    fun toPolarSleepNight() = PolarSleepNight(
-        polarUser = Url(polarUser),
-        date = date,
-        sleepStartTime = sleepStartTime,
-        sleepEndTime = sleepEndTime,
-        deviceID = deviceID,
-        continuity = continuity,
-        continuityClass = continuityClass,
-        lightSleep = lightSleep,
-        deepSleep = deepSleep,
-        remSleep = remSleep,
-        unrecognizedSleepStage = unrecognizedSleepStage,
-        sleepScore = sleepScore,
-        totalInterruptionDuration = totalInterruptionDuration,
-        sleepCharge = sleepCharge,
-        sleepGoal = sleepGoal,
-        sleepRating = sleepRating,
-        shortInterruptionDuration = shortInterruptionDuration,
-        longInterruptionDuration = longInterruptionDuration,
-        sleepCycles = sleepCycles,
-        groupDurationScore = groupDurationScore,
-        groupSolidityScore = groupSolidityScore,
-        groupRegenerationScore = groupRegenerationScore,
-        hypnogram = hypnogram,
-        heartRateSamples = heartRateSamples
-
+    fun toSleepNight() = SleepNight(
+        startTime = sleepStartTime.toInstant(),
+        endTime = sleepEndTime.toInstant()
     )
 }
+
+private fun String.toInstant() = ZonedDateTime.from(DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(this)).toInstant()!!

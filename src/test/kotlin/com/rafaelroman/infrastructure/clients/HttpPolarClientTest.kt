@@ -1,17 +1,23 @@
 package com.rafaelroman.infrastructure.clients
 
 import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.containsAll
+import assertk.assertions.containsExactly
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotEmpty
 import com.rafaelroman.domain.polar.PolarAccessToken
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
 import com.rafaelroman.fixtures.buildPolarAccessToken
+import com.rafaelroman.fixtures.buildSleepNight
 import com.rafaelroman.fixtures.mockHttpClient
 import com.rafaelroman.fixtures.mockPolarAccessTokenRequest
 import com.rafaelroman.fixtures.mockPolarNightsRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import java.security.SecureRandom
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 internal class HttpPolarClientTest {
@@ -53,9 +59,11 @@ internal class HttpPolarClientTest {
         val secret = UUID.randomUUID().toString()
         val clientId = UUID.randomUUID().toString()
         val accessToken = UUID.randomUUID().toString()
+        val sleepStartTime = "2020-01-01T00:39:07+03:00"
+        val sleepEndTime = "2020-01-01T09:19:37+03:00"
         val provider = HttpPolarClient(
             client = mockHttpClient(
-                mockPolarNightsRequest(accessToken),
+                mockPolarNightsRequest(accessToken, sleepStartTime, sleepEndTime),
             ),
             clientId = clientId,
             clientSecret = secret
@@ -64,6 +72,14 @@ internal class HttpPolarClientTest {
         val result = provider latest buildPolarAccessToken(accessToken = accessToken)
 
         // Assert
-        assertThat(result).isNotEmpty()
+        assertThat(result).containsExactly(
+            buildSleepNight(
+                startTime = sleepStartTime.toInstant(),
+                endTime = sleepEndTime.toInstant()
+            )
+        )
     }
 }
+
+private fun String.toInstant() =
+    ZonedDateTime.parse(this, DateTimeFormatter.ISO_ZONED_DATE_TIME).toInstant()

@@ -1,4 +1,4 @@
-package com.rafaelroman.infrastructure.clients
+package com.rafaelroman.infrastructure.clients.polar
 
 import com.google.gson.annotations.SerializedName
 import com.rafaelroman.domain.polar.PolarAccessCodeProvider

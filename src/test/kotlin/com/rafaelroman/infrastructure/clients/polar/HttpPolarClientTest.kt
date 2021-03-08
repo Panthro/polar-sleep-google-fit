@@ -1,7 +1,6 @@
-package com.rafaelroman.infrastructure.clients
+package com.rafaelroman.infrastructure.clients.polar
 
 import assertk.assertThat
-import assertk.assertions.contains
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import com.rafaelroman.domain.polar.PolarAccessToken

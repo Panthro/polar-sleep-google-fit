@@ -81,7 +81,7 @@ private data class PolarAccessTokenHttpResponse(
     @SerializedName("x_user_id")
     val userId: Long,
 
-    ) {
+) {
     fun toPolarAccessToken(): PolarAccessToken = PolarAccessToken(
         accessToken = accessToken,
         expiresIn = expiresInSeconds,

@@ -8,8 +8,10 @@ import com.rafaelroman.application.polarauthentication.AuthorizeWithPolarUseCase
 import com.rafaelroman.application.syncpolarsleepdata.SyncPolarSleepDataUseCase
 import com.rafaelroman.domain.googlefit.GoogleAccessTokenRepository
 import com.rafaelroman.domain.googlefit.GoogleAuthorizationRequestCode
+import com.rafaelroman.domain.googlefit.GoogleFitSleepNightPublisher
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
+import com.rafaelroman.domain.sleep.SleepNight
 import com.rafaelroman.infrastructure.clients.HttpGoogleAccessTokenProvider
 import com.rafaelroman.infrastructure.clients.HttpPolarClient
 import com.rafaelroman.infrastructure.persistence.ExposedGoogleAccessTokenRepository
@@ -92,7 +94,12 @@ fun Application.module(testing: Boolean = false) {
     val authorizeWithPolarUseCase = AuthorizeWithPolarUseCase(polarHttpClient, polarAccessTokenRepository)
     val authorizeWithGoogleUseCase = AuthorizeWithGoogleUseCase(googleHttpClient, googleAccessTokenRepository)
 
-    val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient)
+    val googleFitSleepPublisher = object : GoogleFitSleepNightPublisher {
+        override fun publish(sleepNight: SleepNight) {
+            TODO("Not yet implemented")
+        }
+    }
+    val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient, googleFitSleepPublisher)
 
     val currentStatusUseCase = CurrentStatusUseCase(googleAccessTokenRepository, polarAccessTokenRepository)
 

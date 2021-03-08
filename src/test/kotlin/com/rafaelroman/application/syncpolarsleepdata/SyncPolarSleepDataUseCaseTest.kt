@@ -23,7 +23,7 @@ internal class SyncPolarSleepDataUseCaseTest {
         val polarAccessTokenRepository = mockk<PolarAccessTokenRepository>()
         val polarSleepDataProvider = mockk<PolarSleepDataProvider>()
         val googleFitSleepPublisher = mockk<GoogleFitSleepNightPublisher>()
-        val usecase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarSleepDataProvider,googleFitSleepPublisher)
+        val usecase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarSleepDataProvider, googleFitSleepPublisher)
         val polarAccessToken = buildPolarAccessToken()
         val sleepNights = listOf(buildSleepNight(), buildSleepNight())
         coEvery {

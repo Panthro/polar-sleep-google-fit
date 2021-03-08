@@ -2,9 +2,7 @@ package com.rafaelroman.infrastructure.clients
 
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.containsAll
 import assertk.assertions.containsExactly
-import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.rafaelroman.domain.polar.PolarAccessToken
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode

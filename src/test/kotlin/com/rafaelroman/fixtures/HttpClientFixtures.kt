@@ -8,6 +8,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandler
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondOk
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.forms.FormDataContent
@@ -33,7 +34,11 @@ fun mockHttpClient(handler: MockRequestHandler) = HttpClient(MockEngine) {
 val Url.hostWithPortIfRequired: String get() = if (port == protocol.defaultPort) host else hostWithPort
 val Url.fullUrl: String get() = "${protocol.name}://$hostWithPortIfRequired$fullPath"
 
-fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request ->
+fun mockPolarNightsRequest(
+    accessToken: String,
+    sleepStartTime: String,
+    sleepEndTime: String
+): MockRequestHandler = { request ->
     when (request.url.fullUrl) {
         "https://www.polaraccesslink.com/v3/users/sleep" -> {
 
@@ -47,8 +52,8 @@ fun mockPolarNightsRequest(accessToken: String): MockRequestHandler = { request 
                             {
                               "polar_user": "https://www.polaraccesslink/v3/users/1",
                               "date": "2020-01-01",
-                              "sleep_start_time": "2020-01-01T00:39:07+03:00",
-                              "sleep_end_time": "2020-01-01T09:19:37+03:00",
+                              "sleep_start_time": "$sleepStartTime",
+                              "sleep_end_time": "$sleepEndTime",
                               "device_id": "1111AAAA",
                               "continuity": 2.1,
                               "continuity_class": 2,
@@ -195,6 +200,42 @@ fun mockGoogleAccessTokenRequest(
                 """.trimIndent(),
                 headers = responseHeaders
             )
+        }
+        else -> error("Unhandled ${request.url.fullUrl}")
+    }
+}
+
+fun mockGooglePutSleepNight(
+    accessToken: String,
+    identifier: String,
+    sessionName: String,
+    description: String,
+    startTimeMillis: Long,
+    endTimeMillis: Long,
+    lastModifiedToken: String,
+): MockRequestHandler = { request ->
+    when (request.url.fullUrl) {
+        "https://www.googleapis.com/fitness/v1/users/me/sessions/$identifier" -> {
+
+            assertThat(request.method).isEqualTo(HttpMethod.Put)
+            assertThat(request.headers["Authorization"]).isEqualTo("Bearer $accessToken")
+            assertThat(request.body.contentType).isEqualTo(ContentType.Application.Json)
+            assertThat((request.body as TextContent).text).isEqualTo(
+                "{\"id\":\"$identifier\"" +
+                    ",\"name\":\"$sessionName\"" +
+                    ",\"description\":\"$description\"" +
+                    ",\"startTimeMillis\":$startTimeMillis" +
+                    ",\"endTimeMillis\":$endTimeMillis" +
+                    ",\"lastModifiedToken\":\"$lastModifiedToken\"" +
+                    ",\"application\":" +
+                    "{\"detailsUrl\":\"https://flow.polar.com\"" +
+                    ",\"name\":\"Polar flow\"" +
+                    ",\"version\":\"1.0\"}" +
+                    ",\"version\":1" +
+                    ",\"activityType\":72" +
+                    "}"
+            )
+            respondOk()
         }
         else -> error("Unhandled ${request.url.fullUrl}")
     }

@@ -10,8 +10,8 @@ import com.rafaelroman.domain.googlefit.GoogleAccessTokenRepository
 import com.rafaelroman.domain.googlefit.GoogleAuthorizationRequestCode
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
-import com.rafaelroman.infrastructure.clients.HttpGoogleAccessTokenProvider
-import com.rafaelroman.infrastructure.clients.HttpPolarClient
+import com.rafaelroman.infrastructure.clients.google.GoogleHttpClient
+import com.rafaelroman.infrastructure.clients.polar.HttpPolarClient
 import com.rafaelroman.infrastructure.persistence.ExposedGoogleAccessTokenRepository
 import com.rafaelroman.infrastructure.persistence.ExposedPolarAccessTokenRepository
 import io.ktor.application.Application
@@ -85,14 +85,14 @@ fun Application.module(testing: Boolean = false) {
         clientId = polarClientId,
         clientSecret = polarClientSecret
     )
-    val googleHttpClient = HttpGoogleAccessTokenProvider(client, clientId = googleClientId, clientSecret = googleClientSecret)
+    val googleHttpClient = GoogleHttpClient(client, clientId = googleClientId, clientSecret = googleClientSecret)
     val polarAccessTokenRepository: PolarAccessTokenRepository = ExposedPolarAccessTokenRepository(db)
     val googleAccessTokenRepository: GoogleAccessTokenRepository = ExposedGoogleAccessTokenRepository(db)
 
     val authorizeWithPolarUseCase = AuthorizeWithPolarUseCase(polarHttpClient, polarAccessTokenRepository)
     val authorizeWithGoogleUseCase = AuthorizeWithGoogleUseCase(googleHttpClient, googleAccessTokenRepository)
 
-    val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient)
+    val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient, googleHttpClient, googleAccessTokenRepository)
 
     val currentStatusUseCase = CurrentStatusUseCase(googleAccessTokenRepository, polarAccessTokenRepository)
 

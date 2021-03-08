@@ -8,6 +8,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandler
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondOk
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.forms.FormDataContent
@@ -199,6 +200,44 @@ fun mockGoogleAccessTokenRequest(
                 """.trimIndent(),
                 headers = responseHeaders
             )
+        }
+        else -> error("Unhandled ${request.url.fullUrl}")
+    }
+}
+
+
+
+fun mockGooglePutSleepNight(
+    accessToken: String,
+    identifier: String,
+    sessionName: String,
+    description: String,
+    startTimeMillis: Long,
+    endTimeMillis: Long,
+    lastModifiedToken: String,
+): MockRequestHandler = { request ->
+    when (request.url.fullUrl) {
+        "https://www.googleapis.com/fitness/v1/users/me/sessions/$identifier" -> {
+
+            assertThat(request.method).isEqualTo(HttpMethod.Put)
+            assertThat(request.headers["Authorization"]).isEqualTo("Bearer $accessToken")
+            assertThat(request.body.contentType).isEqualTo(ContentType.Application.Json)
+            assertThat((request.body as TextContent).text).isEqualTo(
+                "{\"id\":\"$identifier\"" +
+                        ",\"name\":\"$sessionName\"" +
+                        ",\"description\":\"$description\"" +
+                        ",\"startTimeMillis\":$startTimeMillis" +
+                        ",\"endTimeMillis\":$endTimeMillis" +
+                        ",\"lastModifiedToken\":\"$lastModifiedToken\"" +
+                        ",\"application\":" +
+                        "{\"detailsUrl\":\"https://flow.polar.com\"" +
+                        ",\"name\":\"Polar flow\"" +
+                        ",\"version\":\"1.0\"}" +
+                        ",\"version\":1" +
+                        ",\"activityType\":72" +
+                        "}"
+            )
+            respondOk()
         }
         else -> error("Unhandled ${request.url.fullUrl}")
     }

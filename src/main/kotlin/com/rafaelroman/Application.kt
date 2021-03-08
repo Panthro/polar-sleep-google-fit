@@ -8,10 +8,8 @@ import com.rafaelroman.application.polarauthentication.AuthorizeWithPolarUseCase
 import com.rafaelroman.application.syncpolarsleepdata.SyncPolarSleepDataUseCase
 import com.rafaelroman.domain.googlefit.GoogleAccessTokenRepository
 import com.rafaelroman.domain.googlefit.GoogleAuthorizationRequestCode
-import com.rafaelroman.domain.googlefit.GoogleFitSleepNightPublisher
 import com.rafaelroman.domain.polar.PolarAccessTokenRepository
 import com.rafaelroman.domain.polar.PolarAuthorizationRequestCode
-import com.rafaelroman.domain.sleep.SleepNight
 import com.rafaelroman.infrastructure.clients.google.GoogleHttpClient
 import com.rafaelroman.infrastructure.clients.polar.HttpPolarClient
 import com.rafaelroman.infrastructure.persistence.ExposedGoogleAccessTokenRepository
@@ -94,12 +92,8 @@ fun Application.module(testing: Boolean = false) {
     val authorizeWithPolarUseCase = AuthorizeWithPolarUseCase(polarHttpClient, polarAccessTokenRepository)
     val authorizeWithGoogleUseCase = AuthorizeWithGoogleUseCase(googleHttpClient, googleAccessTokenRepository)
 
-    val googleFitSleepPublisher = object : GoogleFitSleepNightPublisher {
-        override fun publish(sleepNight: SleepNight) {
-            TODO("Not yet implemented")
-        }
-    }
-    val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient, googleFitSleepPublisher)
+
+    val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient, googleHttpClient, googleAccessTokenRepository)
 
     val currentStatusUseCase = CurrentStatusUseCase(googleAccessTokenRepository, polarAccessTokenRepository)
 
@@ -114,7 +108,7 @@ fun Application.module(testing: Boolean = false) {
         get("/") {
             val (googleAuthStatus, polarAuthStatus) = currentStatusUseCase.status()
             val fullAuthentication = googleAuthStatus is GoogleAuthStatus.Authenticated &&
-                polarAuthStatus is PolarAuthStatus.Authenticated
+                    polarAuthStatus is PolarAuthStatus.Authenticated
 
             call.respondHtml {
                 head {
@@ -138,13 +132,13 @@ fun Application.module(testing: Boolean = false) {
                                 GoogleAuthStatus.Authenticated -> span { +"Google connected" }
                                 GoogleAuthStatus.Unauthenticated -> a {
                                     href = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
-                                        "redirect_uri=http://localhost:8080/callback/google" +
-                                        "&prompt=consent" +
-                                        "&response_type=code" +
-                                        "&client_id=$googleClientId" +
-                                        "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
-                                        "&access_type=offline" +
-                                        "&flowName=GeneralOAuthFlow"
+                                            "redirect_uri=http://localhost:8080/callback/google" +
+                                            "&prompt=consent" +
+                                            "&response_type=code" +
+                                            "&client_id=$googleClientId" +
+                                            "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
+                                            "&access_type=offline" +
+                                            "&flowName=GeneralOAuthFlow"
                                     span { +"Connect Google" }
                                 }
                             }

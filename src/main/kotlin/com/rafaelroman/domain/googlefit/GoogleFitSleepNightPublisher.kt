@@ -3,5 +3,7 @@ package com.rafaelroman.domain.googlefit
 import com.rafaelroman.domain.sleep.SleepNight
 
 interface GoogleFitSleepNightPublisher {
-    infix fun publish(sleepNight: SleepNight)
+    suspend infix fun publish(sleepNightPair: Pair<SleepNight, GoogleAccessToken>): GoogleFitSleepNightPublished
 }
+
+object GoogleFitSleepNightPublished

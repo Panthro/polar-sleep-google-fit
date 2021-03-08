@@ -1,4 +1,4 @@
-package com.rafaelroman.infrastructure.clients
+package com.rafaelroman.infrastructure.clients.google
 
 import com.google.gson.annotations.SerializedName
 import com.rafaelroman.domain.googlefit.GoogleAccessToken
@@ -11,7 +11,7 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.http.ContentType
 import io.ktor.http.Parameters
 
-class HttpGoogleAccessTokenProvider(
+class GoogleHttpClient(
     private val client: HttpClient,
     private val clientSecret: String,
     private val clientId: String,

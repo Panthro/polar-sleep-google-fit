@@ -1,4 +1,4 @@
-package com.rafaelroman.infrastructure.clients
+package com.rafaelroman.infrastructure.clients.google
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -10,7 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import java.util.UUID.randomUUID
 
-internal class HttpGoogleAccessTokenProviderTest {
+internal class GoogleHttpClientTest {
 
     @Test
     fun `should retrieve access token`() = runBlocking {
@@ -29,7 +29,7 @@ internal class HttpGoogleAccessTokenProviderTest {
                 refreshToken = googleAccessToken.refreshToken,
             ),
         )
-        val provider = HttpGoogleAccessTokenProvider(
+        val provider = GoogleHttpClient(
             client,
             clientId = clientId,
             clientSecret = secret

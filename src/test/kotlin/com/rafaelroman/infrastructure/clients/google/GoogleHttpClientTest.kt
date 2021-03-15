@@ -20,10 +20,10 @@ internal class GoogleHttpClientTest {
     @Test
     fun `should retrieve access token`() = runBlocking {
         // Arrange
-        val googleRequestCode = GoogleAuthorizationRequestCode(randomUUID().toString())
+        val googleRequestCode = GoogleAuthorizationRequestCode(randomUUID().toString(), randomUUID().toString())
         val secret = randomUUID().toString()
         val clientId = randomUUID().toString()
-        val googleAccessToken = buildGoogleAccessToken()
+        val googleAccessToken = buildGoogleAccessToken(polarUserId = googleRequestCode.polarUserId)
         val client = mockHttpClient(
             mockGoogleAccessTokenRequest(
                 clientSecret = secret,

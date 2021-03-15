@@ -35,7 +35,7 @@ class GoogleHttpClient(
                     append("redirect_uri", "http://localhost:8080/callback/google")
                 }
             )
-        }.toGoogleAccessToken()
+        }.toGoogleAccessToken(googleAuthorizationRequestCode.polarUserId)
 
     override suspend fun publish(sleepNightPair: Pair<SleepNight, GoogleAccessToken>): GoogleFitSleepNightPublished {
         val sleepNight = sleepNightPair.first
@@ -67,10 +67,11 @@ private data class GoogleAccessTokenHttpResponse(
     @SerializedName("refresh_token")
     val refreshToken: String,
 ) {
-    fun toGoogleAccessToken(): GoogleAccessToken = GoogleAccessToken(
+    fun toGoogleAccessToken(polarUserId: String): GoogleAccessToken = GoogleAccessToken(
         accessToken = accessToken,
         expiresInSeconds = expiresInSeconds,
-        refreshToken = refreshToken
+        refreshToken = refreshToken,
+        polarUserId = polarUserId
     )
 }
 

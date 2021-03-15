@@ -11,13 +11,14 @@ import java.util.concurrent.TimeUnit
 fun buildPolarAccessToken(accessToken: String = UUID.randomUUID().toString()) = PolarAccessToken(
     accessToken = accessToken,
     expiresIn = TimeUnit.HOURS.toMillis(1),
-    userId = SecureRandom().nextLong()
+    userId = SecureRandom().nextLong().toString()
 )
 
-fun buildGoogleAccessToken() = GoogleAccessToken(
+fun buildGoogleAccessToken(polarUserId: String = UUID.randomUUID().toString()) = GoogleAccessToken(
     accessToken = UUID.randomUUID().toString(),
     expiresInSeconds = SecureRandom().nextLong(),
     refreshToken = UUID.randomUUID().toString(),
+    polarUserId = polarUserId
 )
 
 fun buildSleepNight(

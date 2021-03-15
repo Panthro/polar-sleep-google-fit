@@ -47,7 +47,7 @@ internal class HttpPolarClientTest {
 
         // Assert
 
-        assertThat(result).isEqualTo(PolarAccessToken(accessToken, expiresIn, userId))
+        assertThat(result).isEqualTo(PolarAccessToken(accessToken, expiresIn, userId.toString()))
     }
 
     @Test

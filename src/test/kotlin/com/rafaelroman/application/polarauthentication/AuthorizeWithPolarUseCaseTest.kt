@@ -39,7 +39,7 @@ internal class AuthorizeWithPolarUseCaseTest {
         val result = useCase authorize authorizationRequestCode
 
         // Assert
-        assertThat(result).isEqualTo(AuthorizeWithPolarSuccessfully)
+        assertThat(result).isEqualTo(polarAccessToken)
         coVerify {
             polarAccessTokenRepository.save(polarAccessToken)
         }

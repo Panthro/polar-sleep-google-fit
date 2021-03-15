@@ -35,10 +35,10 @@ internal class SyncPolarSleepDataUseCaseTest {
         val googleAccessToken = buildGoogleAccessToken()
         val sleepNights = listOf(buildSleepNight() to googleAccessToken, buildSleepNight() to googleAccessToken)
         coEvery {
-            polarAccessTokenRepository.current()
+            polarAccessTokenRepository.find(polarAccessToken.userId)
         } returns polarAccessToken
         coEvery {
-            googleAccessTokenRepository.current()
+            googleAccessTokenRepository.find(polarUserId = polarAccessToken.userId)
         } returns googleAccessToken
 
         coEvery {
@@ -49,7 +49,7 @@ internal class SyncPolarSleepDataUseCaseTest {
             googleFitSleepPublisher publish any()
         } returns GoogleFitSleepNightPublished
         // Act
-        val result = usecase.sync()
+        val result = usecase.sync(polarAccessToken.userId.toString())
         // Assert
         assertThat(result).isEqualTo(SyncPolarSleepDataSuccessfully)
 

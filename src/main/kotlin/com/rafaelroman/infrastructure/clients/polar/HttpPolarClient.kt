@@ -85,7 +85,7 @@ private data class PolarAccessTokenHttpResponse(
     fun toPolarAccessToken(): PolarAccessToken = PolarAccessToken(
         accessToken = accessToken,
         expiresIn = expiresInSeconds,
-        userId = userId
+        userId = userId.toString()
     )
 }
 

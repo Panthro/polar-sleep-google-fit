@@ -1,8 +1,5 @@
 package com.rafaelroman
 
-import com.rafaelroman.application.currentstatus.CurrentStatusUseCase
-import com.rafaelroman.application.currentstatus.GoogleAuthStatus
-import com.rafaelroman.application.currentstatus.PolarAuthStatus
 import com.rafaelroman.application.googleauth.AuthorizeWithGoogleUseCase
 import com.rafaelroman.application.polarauthentication.AuthorizeWithPolarUseCase
 import com.rafaelroman.application.syncpolarsleepdata.SyncPolarSleepDataUseCase
@@ -94,8 +91,6 @@ fun Application.module(testing: Boolean = false) {
 
     val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient, googleHttpClient, googleAccessTokenRepository)
 
-    val currentStatusUseCase = CurrentStatusUseCase(googleAccessTokenRepository, polarAccessTokenRepository)
-
     install(Locations) {
     }
     install(CallLogging) {
@@ -105,33 +100,43 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         get("/") {
-            val (googleAuthStatus, polarAuthStatus) = currentStatusUseCase.status()
-            val fullAuthentication = googleAuthStatus is GoogleAuthStatus.Authenticated &&
-                polarAuthStatus is PolarAuthStatus.Authenticated
-
             call.respondHtml {
                 head {
                     title("Polar sleep sync")
                 }
                 body {
                     div {
+
                         div {
-                            when (polarAuthStatus) {
-                                PolarAuthStatus.Authenticated -> span { +"Polar connected" }
-                                PolarAuthStatus.Unauthenticated -> a {
-                                    href = "https://flow.polar.com/oauth2/authorization?response_type=code&client_id=$polarClientId"
-                                    span { +"Connect polar" }
-                                }
+                            a {
+                                href = "https://flow.polar.com/oauth2/authorization?response_type=code&client_id=$polarClientId"
+                                span { +"Connect polar" }
                             }
                         }
-
-                        br { }
-                        div {
-                            when (googleAuthStatus) {
-                                GoogleAuthStatus.Authenticated -> span { +"Google connected" }
-                                GoogleAuthStatus.Unauthenticated -> a {
+                    }
+                }
+            }
+        }
+    }
+    routing {
+        get<PolarConnected> { polar ->
+            run {
+                when (polarAccessTokenRepository.find(polar.userId)) {
+                    null -> {
+                        call.respondRedirect("/")
+                    }
+                    else -> {
+                        call.respondHtml {
+                            head {
+                                title("Polar sleep sync")
+                            }
+                            body {
+                                span { +"Polar Connected" }
+                                br { }
+                                a {
                                     href = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
                                         "redirect_uri=http://localhost:8080/callback/google" +
+                                        "&state=${polar.userId}" +
                                         "&prompt=consent" +
                                         "&response_type=code" +
                                         "&client_id=$googleClientId" +
@@ -142,32 +147,25 @@ fun Application.module(testing: Boolean = false) {
                                 }
                             }
                         }
-                        br {}
-                        span {
-                            if (fullAuthentication) {
-                                a {
-                                    href = href(SyncSleepLocation())
-                                    span { +"Sync polar sleep data with Google fit" }
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
-    }
-    routing {
         get<PolarAuthenticationCallbackLocation> { callback ->
-            authorizeWithPolarUseCase authorize PolarAuthorizationRequestCode(callback.code)
-            call.respondRedirect("/")
+            val accessToken = authorizeWithPolarUseCase authorize PolarAuthorizationRequestCode(callback.code)
+            call.respondRedirect(
+                href(PolarConnected(accessToken.userId))
+            )
         }
         get<GoogleAuthenticationCallbackLocation> { callback ->
-            authorizeWithGoogleUseCase authorize GoogleAuthorizationRequestCode(callback.code)
-            call.respondRedirect("/")
+            authorizeWithGoogleUseCase authorize GoogleAuthorizationRequestCode(callback.code, callback.state)
+            call.respondRedirect(
+                href(SyncSleepLocation(callback.state))
+            )
         }
 
-        get<SyncSleepLocation> {
-            syncPolarSleepDataUseCase.sync()
+        get<SyncSleepLocation> { sync ->
+            syncPolarSleepDataUseCase.sync(sync.userId)
             call.respondText { "Sync successfully" }
         }
     }
@@ -177,7 +175,10 @@ fun Application.module(testing: Boolean = false) {
 class PolarAuthenticationCallbackLocation(val code: String)
 
 @Location("/callback/google")
-class GoogleAuthenticationCallbackLocation(val code: String)
+class GoogleAuthenticationCallbackLocation(val code: String, val state: String)
 
-@Location("/sync/sleep")
-class SyncSleepLocation
+@Location("/sync/sleep/{userId}")
+class SyncSleepLocation(val userId: String)
+
+@Location("/polar/{userId}")
+class PolarConnected(val userId: String)

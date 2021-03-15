@@ -17,6 +17,6 @@ internal class ExposedPolarAccessTokenRepositoryTest {
         // Act
         repository save polarAccessToken
         // Assert
-        assertThat(repository.current()).isEqualTo(polarAccessToken)
+        assertThat(repository.find(polarAccessToken.userId.toString())).isEqualTo(polarAccessToken)
     }
 }

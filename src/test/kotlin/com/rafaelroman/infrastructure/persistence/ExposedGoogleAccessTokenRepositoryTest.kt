@@ -18,6 +18,6 @@ internal class ExposedGoogleAccessTokenRepositoryTest {
         // Act
         repository save googleAccessToken
         // Assert
-        assertThat(repository.current()).isEqualTo(googleAccessToken)
+        assertThat(repository.find(googleAccessToken.polarUserId)).isEqualTo(googleAccessToken)
     }
 }

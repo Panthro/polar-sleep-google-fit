@@ -4,4 +4,5 @@ data class GoogleAccessToken(
     val accessToken: String,
     val expiresInSeconds: Long,
     val refreshToken: String,
+    val polarUserId: String,
 )

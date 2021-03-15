@@ -3,9 +3,7 @@ package com.rafaelroman
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.matchesPredicate
-import com.rafaelroman.infrastructure.persistence.GoogleAccessTokenDao
 import com.rafaelroman.infrastructure.persistence.GoogleAccessTokenTable
-import com.rafaelroman.infrastructure.persistence.PolarAccessTokenDao
 import com.rafaelroman.infrastructure.persistence.PolarAccessTokenTable
 import io.ktor.application.Application
 import io.ktor.config.MapApplicationConfig
@@ -16,7 +14,6 @@ import io.ktor.server.testing.withTestApplication
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Test
-import java.security.SecureRandom
 import java.util.UUID
 
 class ApplicationTest {
@@ -33,33 +30,6 @@ class ApplicationTest {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 assertThat(response.content).matchesPredicate {
                     it!!.contains("Connect polar")
-                    it.contains("Connect Google")
-                }
-            }
-        }
-    }
-
-    @Test
-    fun `should load say google and polar authenticated`() {
-        withTestApplication({
-            testEnvironment()
-        }) {
-            transaction {
-                GoogleAccessTokenDao.new {
-                    accessToken = UUID.randomUUID().toString()
-                    refreshToken = UUID.randomUUID().toString()
-                    expiresIn = 1000
-                }
-                PolarAccessTokenDao.new(SecureRandom().nextLong()) {
-                    accessToken = UUID.randomUUID().toString()
-                    expiresIn = 1000
-                }
-            }
-            handleRequest(HttpMethod.Get, "/").apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).matchesPredicate {
-                    it!!.contains("Polar connected")
-                    it.contains("Google connected")
                 }
             }
         }

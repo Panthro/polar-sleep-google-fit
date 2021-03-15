@@ -15,13 +15,13 @@ class SyncPolarSleepDataUseCase(
     private val googleAccessTokenRepository: GoogleAccessTokenRepository
 ) {
 
-    suspend fun sync(): SyncPolarSleepDataSuccessfully {
-        polarAccessTokenRepository.current().let { accessToken ->
+    suspend fun sync(userId: String): SyncPolarSleepDataSuccessfully {
+        polarAccessTokenRepository.find(userId).let { accessToken ->
             polarSleepDataProvider latest accessToken!!
         }.apply {
             logger.info("process=sync-polar-nights status=nights-returned nights=${this.size}")
         }.forEach {
-            googleFitSleepPublisher publish (it to googleAccessTokenRepository.current()!!)
+            googleFitSleepPublisher publish (it to googleAccessTokenRepository.find(userId)!!)
             logger.info("process=sync-polar-nights status=sync-night night=$it")
         }.also {
             logger.info("process=sync-polar-nights status=finished")

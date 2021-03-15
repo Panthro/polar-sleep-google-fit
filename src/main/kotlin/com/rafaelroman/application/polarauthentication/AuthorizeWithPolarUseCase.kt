@@ -17,8 +17,5 @@ class AuthorizeWithPolarUseCase(
             .apply {
                 logger.info("process=AuthorizeWithPolarUseCase status=success accessToken=$this")
             }
-            .let { polarAccessTokenRepository save it }
-            .let { AuthorizeWithPolarSuccessfully }
+            .apply { polarAccessTokenRepository save this }
 }
-
-object AuthorizeWithPolarSuccessfully

@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class ExposedGoogleAccessTokenRepository(private val db: Database) : GoogleAccessTokenRepository {
@@ -23,30 +23,29 @@ class ExposedGoogleAccessTokenRepository(private val db: Database) : GoogleAcces
 
     override suspend infix fun save(googleAccessToken: GoogleAccessToken) {
         transaction(db) {
-            GoogleAccessTokenTable.deleteAll()
+            GoogleAccessTokenTable.deleteWhere {
+                GoogleAccessTokenTable.polarUserId eq googleAccessToken.polarUserId
+            }
             GoogleAccessTokenDao.new {
                 accessToken = googleAccessToken.accessToken
                 expiresIn = googleAccessToken.expiresInSeconds
                 refreshToken = googleAccessToken.refreshToken
+                polarUserId = googleAccessToken.polarUserId
             }
         }
     }
 
-    override suspend fun current(): GoogleAccessToken? = transaction(db) {
-        GoogleAccessTokenDao.all().limit(1)
-            .run {
-                if (!empty()) {
-                    first().let {
-                        GoogleAccessToken(
-                            accessToken = it.accessToken,
-                            refreshToken = it.refreshToken,
-                            expiresInSeconds = it.expiresIn,
-                        )
-                    }
-                } else {
-                    null
-                }
-            }
+    override suspend fun find(polarUserId: String): GoogleAccessToken? = transaction(db) {
+        GoogleAccessTokenDao.find {
+            GoogleAccessTokenTable.polarUserId eq polarUserId
+        }.limit(1).firstOrNull()?.let {
+            GoogleAccessToken(
+                accessToken = it.accessToken,
+                refreshToken = it.refreshToken,
+                expiresInSeconds = it.expiresIn,
+                polarUserId = it.polarUserId
+            )
+        }
     }
 }
 
@@ -54,6 +53,7 @@ object GoogleAccessTokenTable : LongIdTable() {
     val accessToken = varchar("accessToken", 256)
     val expiresIn = long("expiresIn")
     val refreshToken = varchar("refreshToken", 256)
+    val polarUserId = varchar("polarUserId", 256)
 }
 
 class GoogleAccessTokenDao(userId: EntityID<Long>) : LongEntity(userId) {
@@ -62,4 +62,5 @@ class GoogleAccessTokenDao(userId: EntityID<Long>) : LongEntity(userId) {
     var accessToken by GoogleAccessTokenTable.accessToken
     var expiresIn by GoogleAccessTokenTable.expiresIn
     var refreshToken by GoogleAccessTokenTable.refreshToken
+    var polarUserId by GoogleAccessTokenTable.polarUserId
 }

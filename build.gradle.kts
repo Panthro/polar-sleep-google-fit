@@ -7,6 +7,7 @@ plugins {
     application
     jacoco
     kotlin("jvm") version "1.4.10"
+    id("io.gitlab.arturbosch.detekt").version("1.17.1")
 }
 
 group = "com.rafaelroman"

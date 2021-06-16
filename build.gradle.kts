@@ -1,4 +1,3 @@
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -6,6 +5,7 @@ val exposedVersion: String by project
 
 plugins {
     application
+    jacoco
     kotlin("jvm") version "1.4.10"
 }
 
@@ -44,4 +44,15 @@ dependencies {
 
 tasks.test.configure {
     useJUnitPlatform()
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+    reports {
+        xml.required.set(true)
+    }
 }

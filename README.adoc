@@ -1,5 +1,7 @@
 = polar-sleep-google-fit
 
+image:https://api.codacy.com/project/badge/Grade/74d61c3078d74bf7a53560a4abaddd42[link="https://app.codacy.com/gh/Panthro/polar-sleep-google-fit?utm_source=github.com&utm_medium=referral&utm_content=Panthro/polar-sleep-google-fit&utm_campaign=Badge_Grade_Settings"]
+
 polar-gfit-sleep is your new project powered by http://ktor.io[Ktor] framework.
 
 Company website: rafaelroman.com Ktor Version: 1.5.2 Kotlin Version: 1.4.10

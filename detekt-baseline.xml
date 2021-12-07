@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>LongMethod:Application.kt$ @Suppress("unused") // Referenced in application.conf @kotlin.jvm.JvmOverloads fun Application.module(testing: Boolean = false)</ID>
+    <ID>LongParameterList:HttpClientFixtures.kt$( accessToken: String, identifier: String, sessionName: String, description: String, startTimeMillis: Long, endTimeMillis: Long, lastModifiedToken: String, )</ID>
+    <ID>LongParameterList:HttpClientFixtures.kt$( code: String, accessToken: String, expiresIn: Long, refreshToken: String, clientId: String, clientSecret: String, )</ID>
+    <ID>LongParameterList:HttpClientFixtures.kt$( code: String, accessToken: String, expiresIn: Long, userId: Long, clientId: String, clientSecret: String, )</ID>
+    <ID>MagicNumber:ExposedGoogleAccessTokenRepository.kt$GoogleAccessTokenTable$256</ID>
+    <ID>MagicNumber:ExposedPolarAccessTokenRepository.kt$PolarAccessTokenTable$256</ID>
+    <ID>MagicNumber:HttpPolarClient.kt$HttpPolarClient$409</ID>
+    <ID>MaxLineLength:Application.kt$href = "https://flow.polar.com/oauth2/authorization?response_type=code&amp;client_id=$polarClientId"</ID>
+    <ID>MaxLineLength:Application.kt$val syncPolarSleepDataUseCase = SyncPolarSleepDataUseCase(polarAccessTokenRepository, polarHttpClient, googleHttpClient, googleAccessTokenRepository)</ID>
+    <ID>MaxLineLength:HttpClientFixtures.kt$assertThat(request.body.contentType.toString()).isEqualTo("application/x-www-form-urlencoded; charset=UTF-8")</ID>
+    <ID>MaxLineLength:HttpClientFixtures.kt$assertThat(request.headers["Authorization"]).isEqualTo("Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}")</ID>
+    <ID>MaxLineLength:HttpPolarClient.kt$HttpPolarClient$header("Authorization", "Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}")</ID>
+  </CurrentIssues>
+</SmellBaseline>

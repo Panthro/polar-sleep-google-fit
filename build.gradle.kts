@@ -64,6 +64,11 @@ jib {
         ports = listOf("8080")
     }
     to {
-        image = "panthro/polar-sleep-google-fit:$version"
+        image = "${System.getenv("DOCKER_USERNAME")}/polar-gfit-sleep:$version"
+        tags = setOf("latest")
+        auth {
+            username = System.getenv("DOCKER_USERNAME")
+            password = System.getenv("DOCKER_TOKEN")
+        }
     }
 }

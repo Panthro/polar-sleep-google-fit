@@ -64,6 +64,6 @@ jib {
         ports = listOf("8080")
     }
     to {
-        image = "panthro/polar-gfit-sleep:$version"
+        image = "panthro/polar-sleep-google-fit:$version"
     }
 }

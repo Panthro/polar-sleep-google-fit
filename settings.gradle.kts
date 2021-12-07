@@ -1,1 +1,1 @@
-rootProject.name = "polar-gfit-sleep"
+rootProject.name = "polar-sleep-google-fit"

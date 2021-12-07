@@ -8,6 +8,7 @@ plugins {
     jacoco
     kotlin("jvm") version "1.4.10"
     id("io.gitlab.arturbosch.detekt").version("1.17.1")
+    id("com.google.cloud.tools.jib").version("3.1.4")
 }
 
 group = "com.rafaelroman"
@@ -55,5 +56,19 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
     reports {
         xml.required.set(true)
+    }
+}
+
+jib {
+    container {
+        ports = listOf("8080")
+    }
+    to {
+        image = "${System.getenv("DOCKER_USERNAME")}/polar-gfit-sleep:$version"
+        tags = setOf("latest")
+        auth {
+            username = System.getenv("DOCKER_USERNAME")
+            password = System.getenv("DOCKER_TOKEN")
+        }
     }
 }

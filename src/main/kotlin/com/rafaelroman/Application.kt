@@ -77,12 +77,19 @@ fun Application.module(testing: Boolean = false) {
     val googleClientId = environment.config.required("google.oauth2.clientId")
     val googleClientSecret = environment.config.required("google.oauth2.clientSecret")
 
+    val redirectBase = environment.config.required("redirectBase")
+
     val polarHttpClient = HttpPolarClient(
         client,
         clientId = polarClientId,
         clientSecret = polarClientSecret
     )
-    val googleHttpClient = GoogleHttpClient(client, clientId = googleClientId, clientSecret = googleClientSecret)
+    val googleHttpClient = GoogleHttpClient(
+        client,
+        clientId = googleClientId,
+        clientSecret = googleClientSecret,
+        redirectBase = redirectBase
+    )
     val polarAccessTokenRepository: PolarAccessTokenRepository = ExposedPolarAccessTokenRepository(db)
     val googleAccessTokenRepository: GoogleAccessTokenRepository = ExposedGoogleAccessTokenRepository(db)
 
@@ -135,14 +142,14 @@ fun Application.module(testing: Boolean = false) {
                                 br { }
                                 a {
                                     href = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
-                                        "redirect_uri=http://localhost:8080/callback/google" +
-                                        "&state=${polar.userId}" +
-                                        "&prompt=consent" +
-                                        "&response_type=code" +
-                                        "&client_id=$googleClientId" +
-                                        "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
-                                        "&access_type=offline" +
-                                        "&flowName=GeneralOAuthFlow"
+                                            "redirect_uri=$redirectBase/callback/google" +
+                                            "&state=${polar.userId}" +
+                                            "&prompt=consent" +
+                                            "&response_type=code" +
+                                            "&client_id=$googleClientId" +
+                                            "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.sleep.write" +
+                                            "&access_type=offline" +
+                                            "&flowName=GeneralOAuthFlow"
                                     span { +"Connect Google" }
                                 }
                             }

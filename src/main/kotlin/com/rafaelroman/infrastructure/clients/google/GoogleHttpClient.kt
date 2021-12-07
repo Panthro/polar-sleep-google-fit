@@ -22,6 +22,7 @@ class GoogleHttpClient(
     private val clientSecret: String,
     private val clientId: String,
     private val idProvider: SleepNightIdentifierProvider = SleepNightIdentifierProvider,
+    private val redirectBase: String = "http://localhost:8080",
 ) : GoogleAccessTokenProvider, GoogleFitSleepNightPublisher {
     override suspend fun withCode(googleAuthorizationRequestCode: GoogleAuthorizationRequestCode): GoogleAccessToken =
         client.submitForm<GoogleAccessTokenHttpResponse>("https://oauth2.googleapis.com/token") {
@@ -32,7 +33,7 @@ class GoogleHttpClient(
                     append("client_id", clientId)
                     append("client_secret", clientSecret)
                     append("grant_type", "authorization_code")
-                    append("redirect_uri", "http://localhost:8080/callback/google")
+                    append("redirect_uri", "$redirectBase/callback/google")
                 }
             )
         }.toGoogleAccessToken(googleAuthorizationRequestCode.polarUserId)

@@ -43,6 +43,7 @@ private fun Application.testEnvironment() {
         put("polar.oauth2.clientSecret", UUID.randomUUID().toString())
         put("google.oauth2.clientId", UUID.randomUUID().toString())
         put("google.oauth2.clientSecret", UUID.randomUUID().toString())
+        put("redirectBase", "http://localhost:8080")
     }
     module(testing = true)
 }

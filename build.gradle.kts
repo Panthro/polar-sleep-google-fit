@@ -65,6 +65,7 @@ jib {
     }
     to {
         image = "${System.getenv("DOCKER_USERNAME")}/polar-gfit-sleep:$version"
+        tags = setOf("latest")
         auth {
             username = System.getenv("DOCKER_USERNAME")
             password = System.getenv("DOCKER_TOKEN")

@@ -22,6 +22,7 @@ internal class GoogleHttpClientTest {
         // Arrange
         val googleRequestCode = GoogleAuthorizationRequestCode(randomUUID().toString(), randomUUID().toString())
         val secret = randomUUID().toString()
+        val redirectBase = "http://localhost:8080"
         val clientId = randomUUID().toString()
         val googleAccessToken = buildGoogleAccessToken(polarUserId = googleRequestCode.polarUserId)
         val client = mockHttpClient(
@@ -37,7 +38,8 @@ internal class GoogleHttpClientTest {
         val provider = GoogleHttpClient(
             client,
             clientId = clientId,
-            clientSecret = secret
+            clientSecret = secret,
+            redirectBase = redirectBase,
         )
         // Act
         val result = provider withCode googleRequestCode
@@ -54,6 +56,7 @@ internal class GoogleHttpClientTest {
         val googleAccessToken = buildGoogleAccessToken()
         val sleepNightIdentifierProvider = mockk<SleepNightIdentifierProvider>()
         val identifier = randomUUID().toString()
+        val redirectBase = "http://localhost:8080"
         every {
             sleepNightIdentifierProvider identifier sleepNight
         } returns identifier
@@ -72,7 +75,8 @@ internal class GoogleHttpClientTest {
             client,
             clientId = clientId,
             clientSecret = secret,
-            idProvider = sleepNightIdentifierProvider
+            idProvider = sleepNightIdentifierProvider,
+            redirectBase = redirectBase,
         )
         // Act
         val result = publisher publish (sleepNight to googleAccessToken)
